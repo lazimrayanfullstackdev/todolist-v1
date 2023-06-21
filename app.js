@@ -10,6 +10,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"));
 
 var items =["Buy Food","Cook Food","Eat Food"];
+var worklists = [];
 
 app.get("/",function(req, res){
     var today = new Date();
@@ -20,7 +21,7 @@ app.get("/",function(req, res){
     };
     var day = today.toLocaleDateString("en-US",options);
     res.render("list",{
-        kindofday:day,
+        listTitle:day,
         newItem:items,
         ItemsLength: items.length
     });
@@ -28,8 +29,22 @@ app.get("/",function(req, res){
 
 app.post("/",function(req, res){
     var item = req.body.newItem;
+    if(req.body.list === "Work"){
+        worklists.push(item);
+        res.redirect("/work")
+    }else{
     items.push(item);
     res.redirect("/");
+    }
+})
+
+
+app.get("/work",function(req, res){
+    res.render("list", {
+        listTitle: "Work List",
+        newItem:worklists,
+        ItemsLength: worklists.length
+    });
 })
 
 app.listen(process.env.PORT || 3000)
